@@ -63,6 +63,8 @@ To avoid unnecessary charges the EC2 instance is stopped when not in use. The in
 
 ## Current Architecture
 
+![Architecture Diagram](wireguard_aws_architecture.svg)
+
 - **EC2 Instance:** Ubuntu Server 24.04 LTS, t2.micro
 - **Region:** us-east-2 (Ohio)
 - **VPN Protocol:** WireGuard on UDP port 51820
