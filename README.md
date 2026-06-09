@@ -49,7 +49,7 @@ To avoid unnecessary charges the EC2 instance is stopped when not in use. The in
 ---
 
 ### v1.1 — Elastic IP Migration
-*June 8, 2026*
+*June 9, 2026*
 
 **Problem:** EC2's default public IP changes every time the instance is stopped and started, requiring manual updates to the `Endpoint` field in every client config after each restart. With multiple devices connected this quickly becomes impractical.
 
