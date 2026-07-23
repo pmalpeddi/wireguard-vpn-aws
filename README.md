@@ -61,9 +61,22 @@ To avoid unnecessary charges the EC2 instance is stopped when not in use. The in
 
 ---
 
+### v1.2 — Least Privilege IAM
+*July 23, 2026*
+ 
+**Problem:** The `vpn-user` IAM user had `AmazonEC2FullAccess` attached, which grants unrestricted access to every EC2 action across the entire account — launching arbitrary instances, deleting VPCs and security groups it doesn't own, managing snapshots and AMIs, and more. None of that is used by this project's actual workflow (start/stop one instance, manage one Elastic IP, edit one security group's rules), so the policy didn't reflect least privilege despite being labeled that way in earlier versions of this README.
+ 
+**Solution:** Replaced `AmazonEC2FullAccess` with a scoped inline policy covering only instance lifecycle (start/stop/reboot/describe), Elastic IP management (allocate/associate/disassociate/release/describe), and security group rule management (authorize/revoke/describe ingress), plus a handful of read-only `Describe*` calls needed for the console to function normally.
+ 
+**Verification:** Stopped and started the instance as `vpn-user` under the new policy, confirmed WireGuard reconnected without issue via the Elastic IP, and confirmed security group rules remained visible and editable.
+ 
+**Known gap:** The EC2 console's instance detail page calls `ec2:DescribeVolumes` to populate the Storage tab, which isn't included in the scoped policy — the console shows an access-denied error there. This doesn't affect the VPN's actual function (start/stop, connectivity, and security group management all work), just a cosmetic console warning. Not yet added since it isn't required for anything the project does.
+ 
+---
+
 ## Current Architecture
 
-![Architecture Diagram](wireguard_aws_architecture.svg)
+![Architecture Diagram](wireguard_aws_architecture_updated.svg)
 
 - **EC2 Instance:** Ubuntu Server 24.04 LTS, t2.micro
 - **Region:** us-east-2 (Ohio)
